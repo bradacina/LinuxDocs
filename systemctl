@@ -6,3 +6,4 @@ systemctl --failed -> see failed units
 systemctl list-unit-files -> see all installed/available units
 (they can be found in /usr/lib/systemd/system or /etc/systemd/system)
 
+systemctl start/stop/reload/restart <unit> -> performs start/stop/reload/restart on a unit
