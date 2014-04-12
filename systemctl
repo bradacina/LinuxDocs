@@ -1,0 +1,8 @@
+systemctl -> list running units
+systemctl list-units -> list running units
+
+systemctl --failed -> see failed units
+
+systemctl list-unit-files -> see all installed/available units
+(they can be found in /usr/lib/systemd/system or /etc/systemd/system)
+
