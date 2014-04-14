@@ -1,0 +1,20 @@
+depmod -> rebuild modules.alias and the modules dep file
+
+/lib/modules/<version>/modules.alias
+
+USB modalias
+------------
+
+usb:v04D9p2013d0390dc00dsc00dp00ic03isc01ip01in00
+
+v = vendor = 04d9
+p = product = 2013
+d = bcd device = 0390
+dc = device class = 0
+dsc = device subclass = 0
+dp = device protocol = 0
+ic = interface class = 03
+isc = interface subclass = 01
+ip = interface protocol = 1
+in = interface number = 0
+
