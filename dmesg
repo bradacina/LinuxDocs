@@ -1,0 +1,4 @@
+
+dmesg -c -> clear the dmesg ring message buffer
+dmesg -n 7 -> change the level of messages that dmesg will print to console
+also see cat /proc/sys/kernel/printk

@@ -1,3 +1,6 @@
+
+Rebuild modules.alias file
+---------------------------
 depmod -> rebuild modules.alias and the modules dep file
 
 /lib/modules/<version>/modules.alias

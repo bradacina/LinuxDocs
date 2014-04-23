@@ -5,25 +5,27 @@
 #define DRIVER_AUTHOR "Bogdan Radacina"
 #define DRIVER_DESC "Demo Driver for USB Keyboard interface class"
 
-#define USB_INTERFACE_CLASS_AND_PROTOCOL(cl, pr) \
-	.match_flags = USB_DEVICE_ID_MATCH_INT_CLASS | USB_DEVICE_ID_MATCH_INT_PROTOCOL , \
+#define USB_INTERFACE_CLASS_AND_PROTOCOL(cl, scl) \
+	.match_flags = USB_DEVICE_ID_MATCH_INT_CLASS | \
+			 USB_DEVICE_ID_MATCH_INT_SUBCLASS , \
 	.bInterfaceClass = (cl), \
-	.bInterfaceProtocol = (pr)
+	.bInterfaceSubClass = (scl)
 
 
-static __init int hello_init(void) 
+static __init int hello_init(void)
 {
-	printk(KERN_DEBUG "HelloWorld loaded.");
+	printk(KERN_DEBUG "HelloWorld loaded.\n");
 	return 0;
 }
 
 static __exit void hello_exit(void)
 {
-	printk(KERN_DEBUG "HelloWorld exiting.");
+	printk(KERN_DEBUG "HelloWorld exiting.\n");
 }
 
 static const struct usb_device_id usbkbd_ids[] = {
-	{ USB_INTERFACE_CLASS_AND_PROTOCOL(0x03, 0x01) }, /* USB Keyboard class */
+	/* USB Keyboard class */
+	{ USB_INTERFACE_CLASS_AND_PROTOCOL(0x01, 0x02) },
 	{ }						/* Terminating entry */
 };
 
