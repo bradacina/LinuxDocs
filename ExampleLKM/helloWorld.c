@@ -7,9 +7,9 @@
 
 #define USB_INTERFACE_CLASS_AND_PROTOCOL(cl, scl) \
 	.match_flags = USB_DEVICE_ID_MATCH_INT_CLASS | \
-			 USB_DEVICE_ID_MATCH_INT_SUBCLASS , \
+			 USB_DEVICE_ID_MATCH_INT_PROTOCOL , \
 	.bInterfaceClass = (cl), \
-	.bInterfaceSubClass = (scl)
+	.bInterfaceProtocol = (scl)
 
 
 static __init int hello_init(void)
@@ -25,7 +25,7 @@ static __exit void hello_exit(void)
 
 static const struct usb_device_id usbkbd_ids[] = {
 	/* USB Keyboard class */
-	{ USB_INTERFACE_CLASS_AND_PROTOCOL(0x01, 0x02) },
+	{ USB_INTERFACE_CLASS_AND_PROTOCOL(0x03, 0x01) },
 	{ }						/* Terminating entry */
 };
 
