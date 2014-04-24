@@ -1,32 +1,28 @@
 
 #include <linux/module.h>
 #include <linux/usb.h>
+#include <uapi/linux/hid.h>
 
 #define DRIVER_AUTHOR "Bogdan Radacina"
 #define DRIVER_DESC "Demo Driver for USB Keyboard interface class"
 
-#define USB_INTERFACE_CLASS_AND_PROTOCOL(cl, scl) \
-	.match_flags = USB_DEVICE_ID_MATCH_INT_CLASS | \
-			 USB_DEVICE_ID_MATCH_INT_PROTOCOL , \
-	.bInterfaceClass = (cl), \
-	.bInterfaceProtocol = (scl)
-
-
 static __init int hello_init(void)
 {
-	printk(KERN_DEBUG "HelloWorld loaded.\n");
+	pr_debug("HelloWorld loaded.\n");
 	return 0;
 }
 
 static __exit void hello_exit(void)
 {
-	printk(KERN_DEBUG "HelloWorld exiting.\n");
+	pr_debug("HelloWorld exiting.\n");
 }
 
 static const struct usb_device_id usbkbd_ids[] = {
 	/* USB Keyboard class */
-	{ USB_INTERFACE_CLASS_AND_PROTOCOL(0x03, 0x01) },
-	{ }						/* Terminating entry */
+	{ USB_INTERFACE_INFO(USB_INTERFACE_CLASS_HID,
+				USB_INTERFACE_SUBCLASS_BOOT,
+				USB_INTERFACE_PROTOCOL_KEYBOARD) },
+	{ }	/* Terminating entry */
 };
 
 MODULE_DEVICE_TABLE(usb, usbkbd_ids);
