@@ -1,0 +1,7 @@
+
+find <path> -name '<file name or extension>' | xargs grep -i '<pattern>'
+
+eg:
+
+find . -name '*.h' | xargs grep -i '#define CONST'
+
