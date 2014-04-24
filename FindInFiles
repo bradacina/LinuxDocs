@@ -5,3 +5,5 @@ eg:
 
 find . -name '*.h' | xargs grep -i '#define CONST'
 
+
+grep -E <extended regular expression>
