@@ -43,6 +43,13 @@ gT -> go to prev tab
 :tabp -> go to prev tab
 N gt -> go to tab number
 
+Misc
+----
+:echo @% -> echo the directory where the file resides
+:ec @% -> echo the directory where the file resides
+:cd <dir> -> set the working directory
+:cd %:h -> set the working directory to the directory where the file being edited resides
+:pwd -> print working directory
 
 NetRW
 ========
