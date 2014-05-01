@@ -1,0 +1,3 @@
+List /proc/devices to see all devices that have been registered/allocated.
+
+After calling alloc_chrdev_region, the device/driver was showing up in /proc/devices

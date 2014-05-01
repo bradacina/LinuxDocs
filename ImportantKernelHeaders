@@ -1,0 +1,13 @@
+
+ ./include/linux/device.h -> driver model ( class_register, device_driver, class_create  
+ ./include/linux/cdev.h -> cdev (cdev_alloc, cdev_init, cdev_add, adds device to /dev ? )
+ ./include/linux/errno.h -> error code defines
+ ./include/uapi/linux/errno.h, ./include/uapi/linux/asm/errno.h, ./include/uapi/linux/asm-generic/errno.h, ./include/uapi/linux/asm-generic/errno-base.h
+
+ ./include/linux/miscdevice.h misc device allocation
+
+q: where is class_register() defined?
+a: ./include/linux/device.h
+
+
+q: where is struct module defined?

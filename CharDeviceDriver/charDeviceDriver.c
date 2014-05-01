@@ -1,34 +1,54 @@
 
 #include <linux/module.h>
+#include <linux/miscdevice.h>
 #include <linux/fs.h>
 
 #define DRIVER_AUTHOR "Bogdan Radacina"
 #define DRIVER_DESC "Demo Driver for a Char device driver" 
 #define DRIVER_NAME "eudyptula"
-#define MAX_DEVICES 1
 
-static dev_t myDevice;
+static struct miscdevice myDevice;
+
+static ssize_t do_read(struct file *file, char __user *buf, size_t count,
+			   loff_t *ppos)
+{
+	return 0;
+}
+
+static ssize_t do_write(struct file *file, const char __user *buf,
+			    size_t count, loff_t *ppos)
+{
+	return 0;
+}
+
+static const struct file_operations myDevice_fops = {
+	.owner = THIS_MODULE,
+	.read = &do_read,
+	.write = &do_write
+};
+
 
 static __init int hello_init(void)
 {
-	int allocResult = alloc_chrdev_region(&myDevice, 0, MAX_DEVICES, DRIVER_NAME);
-	if (allocResult)
-	{
-		pr_error("eudyptula_dev : alloc_chrdev_region failed.\n");
-		goto error; 
+	int error;
+	myDevice.minor = MISC_DYNAMIC_MINOR; 
+	myDevice.name = DRIVER_NAME;
+	myDevice.fops = &myDevice_fops; 
+
+	error = misc_register(&myDevice);
+	if(error) {
+		pr_err("eudyptula_dev: failed to register misc device\n");
+		return error;
 	}
 
-	pr_info("HelloWorld loaded.\n");
+	pr_info("eudyptula_dev: Registered with Minor: %i\n", myDevice.minor);
 	return 0;
-
-error:
-	return allocResult;
 }
 
 static __exit void hello_exit(void)
 {
-	unregister_chrdev_region(myDevice, MAX_DEVICE);	
-	pr_info("HelloWorld exiting.\n");
+	misc_deregister(&myDevice);
+	pr_info("eudyptula_dev: HelloWorld exiting.\n");
 }
 
 module_init(hello_init);
