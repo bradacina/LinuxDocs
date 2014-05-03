@@ -1,0 +1,6 @@
+xinput list
+
+
+find the id of the touchpad
+
+xinput set-prop <id> "Device Enabled" 0
