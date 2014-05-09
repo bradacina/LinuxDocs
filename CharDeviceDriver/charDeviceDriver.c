@@ -2,7 +2,7 @@
 #include <linux/module.h>
 #include <linux/miscdevice.h>
 #include <linux/fs.h>
-#include <uapi/linux/errno.h>
+#include <linux/errno.h>
 #include <linux/uaccess.h>
 #include <linux/string.h>
 
@@ -32,15 +32,12 @@ static struct miscdevice myDevice = {
 static ssize_t do_read(struct file *file, char __user *buf, size_t count,
 			   loff_t *ppos)
 {
-	int ret = 0;
-	if (*ppos)
-		return ret;
+	int retval = min((int)count, MY_ID_CHAR_COUNT);
 
-	ret = copy_to_user(buf, MY_ID, MY_ID_CHAR_COUNT);
-	if (ret)
-		return ret;
-	*ppos += 1;
-	return MY_ID_CHAR_COUNT;
+	if (retval > 0 && copy_to_user(buf, MY_ID, retval)
+				retval = -EFAULT;
+	
+	return retval;	
 }
 
 static ssize_t do_write(struct file *file, const char __user *buf,
