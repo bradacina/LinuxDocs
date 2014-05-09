@@ -16,37 +16,31 @@
 static ssize_t do_read(struct file *, char __user *, size_t, loff_t *);
 static ssize_t do_write(struct file *, const char __user *, size_t, loff_t *);
 
-static struct miscdevice myDevice;
 static const struct file_operations myDevice_fops = {
 	.owner = THIS_MODULE,
 	.read = do_read,
 	.write = do_write
 };
 
+static struct miscdevice myDevice = {
+	.minor = MISC_DYNAMIC_MINOR,
+	.name = DRIVER_NAME,
+	.fops = &myDevice_fops
+
+};
+
 static ssize_t do_read(struct file *file, char __user *buf, size_t count,
 			   loff_t *ppos)
 {
-	ssize_t toRead = 0;
+	int ret = 0;
+	if (*ppos)
+		return ret;
 
-	if ((*ppos) >= MY_ID_CHAR_COUNT) {
-		goto out;
-	}
-
-	if (count < MY_ID_CHAR_COUNT) {
-		toRead = count;
-	}
-
-	if (count >= MY_ID_CHAR_COUNT) {
-		toRead = MY_ID_CHAR_COUNT;
-	}
-
-	if (copy_to_user(buf, MY_ID, toRead)) {
-		toRead = -EFAULT;
-		goto out;
-	}
-	*ppos += toRead;
-out:
-	return toRead;
+	ret = copy_to_user(buf, MY_ID, MY_ID_CHAR_COUNT);
+	if (ret)
+		return ret;
+	*ppos += 1;
+	return MY_ID_CHAR_COUNT;
 }
 
 static ssize_t do_write(struct file *file, const char __user *buf,
@@ -73,26 +67,12 @@ out:
 
 static __init int hello_init(void)
 {
-	int error;
-	myDevice.minor = MISC_DYNAMIC_MINOR;
-	myDevice.name = DRIVER_NAME;
-	myDevice.fops = &myDevice_fops;
-
-	error = misc_register(&myDevice);
-	if (error) {
-		pr_err("eudyptula_dev: failed to register misc device\n");
-		return error;
-	}
-
-	pr_info("eudyptula_dev: Hello World Registered with Minor: %i\n",
-		myDevice.minor);
-	return 0;
+	return misc_register(&myDevice);
 }
 
 static __exit void hello_exit(void)
 {
 	misc_deregister(&myDevice);
-	pr_info("eudyptula_dev: HelloWorld exiting.\n");
 }
 
 module_init(hello_init);
