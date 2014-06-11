@@ -1,6 +1,11 @@
 
 Common commands in Vim
 =======================
+Search
+-----
+/<text> -> find text
+/<text>\c -> \c means case insensitive (can appear anywhere in the pattern)
+
 Buffers
 -------
 :ls -> list current buffers
