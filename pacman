@@ -1,0 +1,9 @@
+pacman -Syu <- perform a system update
+pacman -S <pkg> <- install a single package ( or list of packages )
+pacman -R <pkg> <- remove a package
+pacman -Rs <pkg> <- remove a package and its dependencies
+pacman -Q --help <- query local package database
+pacman -S --help <- query sync database
+pacman -Ss <string> <- search for packages in database
+pacman -Qs <string> <- search for already installed packages
+pacman -Si <pkg> <- display extensive info about a package

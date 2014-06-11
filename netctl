@@ -1,0 +1,7 @@
+On ArchLinux netctl keeps a profile for the eth0 interface in /etc/netctl/ . There is a subfolder called examples/ that contains examples of configuring eth0 with either dhcp or static ip.
+
+netctl start eth0 <- starts eth0 profile
+netctl stop eth0 <- stop eth0 profile
+
+Be careful of any daemons that will bring eth0 interface up automatically when it detects it being down. For example ifplugd is a daemon that monitors the ethernet port for cable being plugged in or unplugged.
+It will then bring up the eth0 interface which will prevent netctl start from working properly.

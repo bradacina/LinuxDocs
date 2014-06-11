@@ -32,12 +32,8 @@ static struct miscdevice myDevice = {
 static ssize_t do_read(struct file *file, char __user *buf, size_t count,
 			   loff_t *ppos)
 {
-	int retval = min((int)count, MY_ID_CHAR_COUNT);
-
-	if (retval > 0 && copy_to_user(buf, MY_ID, retval)
-				retval = -EFAULT;
-	
-	return retval;	
+	return simple_read_from_buffer(buf,
+			count, ppos, MY_ID, MY_ID_CHAR_COUNT);
 }
 
 static ssize_t do_write(struct file *file, const char __user *buf,
@@ -45,14 +41,14 @@ static ssize_t do_write(struct file *file, const char __user *buf,
 {
 	size_t numWritten = 0;
 	char myBuf[MY_ID_CHAR_COUNT] = {0};
-	if (count != MY_ID_CHAR_COUNT+1) {
+
+	numWritten = simple_write_to_buffer(myBuf,
+		MY_ID_CHAR_COUNT, ppos, buf, count);
+	if (numWritten < 0 || count > MY_ID_CHAR_COUNT+1) {
 		numWritten = -EINVAL;
 		goto out;
 	}
-	if (copy_from_user(myBuf, buf, MY_ID_CHAR_COUNT)) {
-		numWritten = -EFAULT;
-		goto out;
-	}
+
 	if (strncmp(myBuf, MY_ID, MY_ID_CHAR_COUNT)) {
 		numWritten = -EINVAL;
 		goto out;
