@@ -1,0 +1,15 @@
+Had to add USB rules to /etc/udev so that the currently running user has access to the usb device
+
+adb devices <- lists connected devices
+adb shell <- starts a shell on the device
+adb pull <src> <dst> <- pulls a file from the device found at <src> and writes it to local dist at <dst>
+
+/data/data/com.android.providers.* <- data providers found on the device
+
+ls -R /data/data/*/databases <- lists all databases on the device
+
+ContentProvider <- is a provider of data/content that allows get/insert/update/detele data from different databases ( content providers )
+UriMatcher <- used to inspect a URI and match against a pre declared route
+ContentResolver <- used by the client to get/insert/update/delete data from ContentProvider
+Cursor <- the ContentResolver returns a cursor when a query is performed by the client. cursor needs to be navigated/enumerated to
+        retrieve all rows of data

@@ -1,0 +1,50 @@
+Builder: (Creational pattern)
+
+used when the object creation is complicated and a lot of parameters are need for object creation or there are a lot of constructors
+with different parameter combinations. the builder is used to set desired parameters in advance and then call a general constructor that
+will use the previously set parameters to construct an object with the desired properties.
+
+class Car ( can have GPS, can be a sports car, can have 2 doors or 4 doors, can have a specific # of HP, etc. )
+
+class Builder {
+    setGPS();
+    setDoors();
+    setHP();
+
+    getResult(); <- builds the object using any previously set parameters
+}
+
+the Builder pattern is a good candidate to turn into a fluent api
+
+-----------------------------------------------------------------------------------
+
+Factory: (Creational pattern)
+
+used when object creation details need to be hidden from the calling class (compositing object). the calling code does not care what specific
+object will be returned (specific type) and all it wants is an object that adheres to an interface. also the factory can hide construction
+details from the calling code. "Define an interface for creating objects but let the implementing classes define what objects get created 
+and how".
+
+------------------------------------------------------------------------------------
+
+Abstract Factory: (Creational pattern)
+
+groups together factories that have a common theme without specifiying concrete classes. the purpose is to insulate the creation of objects
+from their usage and to create families of related objects without having to depend on their concrete classes. this allows for new derived
+types to be introduced with no change to the code that uses the base class. think of creating buttons for both OSX and Windows, but the
+calling code does not know which button is being created; the abstract factory has been setup to create OSX buttons on OSX and Win buttons
+on Windows
+
+------------------------------------------------------------------------------------
+
+Prototype: (Creational pattern)
+
+used when we try to copy objects and creating new objects is expensive. the prototype (interface) of the object contains a method clone
+which each implementing class will fill in. it will call super.clone() and then set any appropriate fields before returning the newly created
+object. it's a way to make specialized code for copying objects cheaply
+
+-----------------------------------------------------------------------------------
+
+Singleton: (Creational pattern)
+
+it restricts the instantiation of a class to a single object. used when a single object is required to coordinate the operation of a program. it introduces global state.
