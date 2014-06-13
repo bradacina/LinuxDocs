@@ -1,0 +1,10 @@
+http://cscope.sourceforge.net/large_projects.html
+
+http://cscope.sourceforge.net/cscope_vim_tutorial.html
+
+cscope -b -q -k -R 
+
+-b -> build database and don't launch cscope GUI
+-q -> creates inverted index file that helps with searchig
+-k -> set kernel mode (don't look in /usr/include)
+-R -> recursive (by default .c and .h files are scanned)

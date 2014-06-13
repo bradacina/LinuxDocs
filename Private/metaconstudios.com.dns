@@ -1,0 +1,84 @@
+
+; <<>> DiG 9.9.2-P1 <<>> metaconstudios.com any
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 39958
+;; flags: qr rd ra; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;metaconstudios.com.		IN	ANY
+
+;; ANSWER SECTION:
+metaconstudios.com.	46339	IN	NS	ns1.mydnsprovider.com.
+metaconstudios.com.	46339	IN	NS	ns2.mydnsprovider.com.
+metaconstudios.com.	46339	IN	NS	ns3.mydnsprovider.com.
+metaconstudios.com.	46339	IN	NS	ns4.mydnsprovider.com.
+
+;; Query time: 29 msec
+;; SERVER: 127.0.1.1#53(127.0.1.1)
+;; WHEN: Wed Feb 12 22:25:58 2014
+;; MSG SIZE  rcvd: 122
+
+
+; <<>> DiG 9.9.2-P1 <<>> metaconstudios.com a
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 38529
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;metaconstudios.com.		IN	A
+
+;; ANSWER SECTION:
+metaconstudios.com.	3600	IN	A	174.34.170.162
+
+;; Query time: 150 msec
+;; SERVER: 127.0.1.1#53(127.0.1.1)
+;; WHEN: Wed Feb 12 22:26:05 2014
+;; MSG SIZE  rcvd: 52
+
+
+; <<>> DiG 9.9.2-P1 <<>> metaconstudios.com mx
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 6066
+;; flags: qr rd ra; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;metaconstudios.com.		IN	MX
+
+;; ANSWER SECTION:
+metaconstudios.com.	3600	IN	MX	5 alt1.aspmx.l.google.com.
+metaconstudios.com.	3600	IN	MX	10 aspmx2.googlemail.com.
+metaconstudios.com.	3600	IN	MX	5 alt2.aspmx.l.google.com.
+metaconstudios.com.	3600	IN	MX	1 aspmx.l.google.com.
+
+;; Query time: 210 msec
+;; SERVER: 127.0.1.1#53(127.0.1.1)
+;; WHEN: Wed Feb 12 22:26:13 2014
+;; MSG SIZE  rcvd: 143
+
+
+; <<>> DiG 9.9.2-P1 <<>> code.metaconstudios.com any
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 45662
+;; flags: qr rd ra; QUERY: 1, ANSWER: 7, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;code.metaconstudios.com.	IN	ANY
+
+;; ANSWER SECTION:
+code.metaconstudios.com. 86400	IN	CNAME	bitbucket.org.
+bitbucket.org.		40694	IN	NS	ns-1746.awsdns-26.co.uk.
+bitbucket.org.		82651	IN	A	131.103.20.167
+bitbucket.org.		40694	IN	NS	ns-1305.awsdns-35.org.
+bitbucket.org.		40694	IN	NS	ns-445.awsdns-55.com.
+bitbucket.org.		40694	IN	NS	ns-584.awsdns-09.net.
+bitbucket.org.		82651	IN	A	131.103.20.168
+
+;; Query time: 35 msec
+;; SERVER: 127.0.1.1#53(127.0.1.1)
+;; WHEN: Wed Feb 12 22:26:21 2014
+;; MSG SIZE  rcvd: 234
+
