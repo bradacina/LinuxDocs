@@ -1,0 +1,14 @@
+Created to allow kernel developers for debugging purposes. Makes information available to user space.
+
+mount -t debugfs none /sys/kernel/debug
+
+linux/debugfs.h
+
+debugfs_create_file - create file in the debug filestystem
+debugfs_create_dir - create a directory inside the debug filesystem
+debugfs_remove - remove a debugfs entry from the debug filesystem
+
+http://lwn.net/Articles/115405/
+http://www.mjmwired.net/kernel/Documentation/filesystems/debugfs.txt
+http://lwn.net/Articles/334546/
+http://people.ee.ethz.ch/~arkeller/linux/kernel_user_space_howto.html#ss2.5

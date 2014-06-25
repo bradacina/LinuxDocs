@@ -56,6 +56,11 @@ Misc
 :cd %:h -> set the working directory to the directory where the file being edited resides
 :pwd -> print working directory
 
+:expandtab
+:noexpandtab
+:set shiftwidth=4
+:set softtabstop=4
+
 NetRW
 ========
 Allows browsing of files and folders on either local machine or remote machine
