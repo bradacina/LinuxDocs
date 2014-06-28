@@ -2,11 +2,13 @@
 #include <linux/module.h>
 #include <linux/errno.h>
 #include <linux/debugfs.h>
+#include <linux/string.h>
 
 #define DRIVER_AUTHOR "Bogdan Radacina"
 #define DRIVER_DESC "Demo Usage of Debugfs"
 #define DIR_NAME "eudyptula"
 #define ID_FILE_NAME "id"
+#define JIFFIES_FILE_NAME "jiffies"
 #define MY_ID "25e6eec82542"
 #define MY_ID_CHAR_COUNT 12
 
@@ -14,6 +16,15 @@
 static ssize_t id_do_read(struct file *, char __user *, size_t, loff_t *);
 static ssize_t id_do_write(struct file *, const char __user *,
 							size_t, loff_t *);
+static ssize_t jiffies_do_read(struct file *, char __user *, size_t, loff_t *);
+static ssize_t jiffies_do_write(struct file *, const char __user *,
+							size_t, loff_t *);
+
+static const struct file_operations jiffies_fops = {
+	.owner = THIS_MODULE,
+	.read = jiffies_do_read,
+	.write = jiffies_do_write
+};
 
 static const struct file_operations id_fops = {
 	.owner = THIS_MODULE,
@@ -23,6 +34,26 @@ static const struct file_operations id_fops = {
 
 static struct dentry *dirEntry;
 static struct dentry *idEntry;
+static struct dentry *jiffiesEntry;
+
+static char jiffiesBuf[25] = {0};
+
+static ssize_t jiffies_do_read(struct file *file, char __user *buf,
+					size_t count, loff_t *ppos)
+{
+	int n = 0;
+	memset(jiffiesBuf, 0, sizeof(jiffiesBuf));
+	n = sprintf(jiffiesBuf, "%lud", jiffies);
+	jiffiesBuf[n] = '\0';
+	return simple_read_from_buffer(buf,
+			count, ppos, jiffiesBuf, n);
+}
+
+static ssize_t jiffies_do_write(struct file *file, const char __user *buf,
+						size_t count, loff_t *ppos)
+{
+	return -EINVAL;
+}
 
 static ssize_t id_do_read(struct file *file, char __user *buf, size_t count,
 			   loff_t *ppos)
@@ -69,6 +100,13 @@ static __init int hello_init(void)
 	if (IS_ERR_OR_NULL(idEntry)) {
 		cleanup();
 		return PTR_ERR(idEntry);
+	}
+
+	jiffiesEntry = debugfs_create_file(JIFFIES_FILE_NAME, 0444,
+		dirEntry, NULL, &jiffies_fops);
+	if (IS_ERR_OR_NULL(jiffiesEntry)) {
+		cleanup();
+		return PTR_ERR(jiffiesEntry);
 	}
 
 	return 0;
