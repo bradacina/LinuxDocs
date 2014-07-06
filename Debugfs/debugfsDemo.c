@@ -3,12 +3,14 @@
 #include <linux/errno.h>
 #include <linux/debugfs.h>
 #include <linux/string.h>
+#include <linux/rwsem.h>
 
 #define DRIVER_AUTHOR "Bogdan Radacina"
 #define DRIVER_DESC "Demo Usage of Debugfs"
 #define DIR_NAME "eudyptula"
 #define ID_FILE_NAME "id"
 #define JIFFIES_FILE_NAME "jiffies"
+#define FOO_FILE_NAME "foo"
 #define MY_ID "25e6eec82542"
 #define MY_ID_CHAR_COUNT 12
 
@@ -19,6 +21,14 @@ static ssize_t id_do_write(struct file *, const char __user *,
 static ssize_t jiffies_do_read(struct file *, char __user *, size_t, loff_t *);
 static ssize_t jiffies_do_write(struct file *, const char __user *,
 							size_t, loff_t *);
+static ssize_t foo_do_read(struct file *, char __user *, size_t, loff_t *);
+static ssize_t foo_do_write(struct file *, const char __user *,
+							size_t, loff_t *);
+static const struct file_operations  foo_fops = {
+	.owner = THIS_MODULE,
+	.read = foo_do_read,
+	.write = foo_do_write
+};
 
 static const struct file_operations jiffies_fops = {
 	.owner = THIS_MODULE,
@@ -35,8 +45,48 @@ static const struct file_operations id_fops = {
 static struct dentry *dirEntry;
 static struct dentry *idEntry;
 static struct dentry *jiffiesEntry;
+static struct dentry *fooEntry;
 
 static char jiffiesBuf[25] = {0};
+static char fooBuf[PAGE_SIZE] = {0};
+static size_t fooBufEndOffset;
+DECLARE_RWSEM(foo_rw_semaphore);
+
+static ssize_t foo_do_read(struct file *file, char __user *buf,
+					size_t count, loff_t *ppos)
+{
+	int n = 0;
+	down_read(&foo_rw_semaphore);
+	n = simple_read_from_buffer(buf,
+			count, ppos, fooBuf, fooBufEndOffset);
+	up_read(&foo_rw_semaphore);
+	return n;
+}
+
+static ssize_t foo_do_write(struct file *file, const char __user *buf,
+			    size_t count, loff_t *ppos)
+{
+	int numWritten = 0;
+	down_write(&foo_rw_semaphore);
+
+	if (*ppos == 0) {
+		memset(fooBuf, 0, sizeof(fooBuf));
+		fooBufEndOffset = 0;
+	}
+
+	if (*ppos + count > PAGE_SIZE) {
+		up_write(&foo_rw_semaphore);
+		return -EINVAL;
+	}
+
+	numWritten = simple_write_to_buffer(fooBuf,
+		sizeof(fooBuf), ppos, buf, count);
+
+	fooBufEndOffset += numWritten;
+
+	up_write(&foo_rw_semaphore);
+	return numWritten;
+}
 
 static ssize_t jiffies_do_read(struct file *file, char __user *buf,
 					size_t count, loff_t *ppos)
@@ -107,6 +157,13 @@ static __init int hello_init(void)
 	if (IS_ERR_OR_NULL(jiffiesEntry)) {
 		cleanup();
 		return PTR_ERR(jiffiesEntry);
+	}
+
+	fooEntry = debugfs_create_file(FOO_FILE_NAME, 0644,
+		dirEntry, NULL, &foo_fops);
+	if (IS_ERR_OR_NULL(fooEntry)) {
+		cleanup();
+		return PTR_ERR(fooEntry);
 	}
 
 	return 0;
