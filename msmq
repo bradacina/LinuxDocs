@@ -1,0 +1,5 @@
+TCP: 1801
+RPC: 135, 2101*, 2103*, 2105*
+UDP: 3527, 1801
+* - these port numbers could be incremented by 11 if the port number is already in use when msmq starts
+135 is the initial port being contacted in order to discover the 21xx ports
