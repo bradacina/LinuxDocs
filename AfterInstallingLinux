@@ -1,0 +1,51 @@
+
+Here are the things to do after installing a new linux
+
+1. Update the system
+
+	sudo apt-get update
+	sudo apt-get upgrade
+
+2. Install Chromium
+	sudo apt-get install chromium-browser
+
+3. Install multimedia codecs
+
+	sudo apt-get install ubuntu-restricted-extras
+	sudo apt-get install libdvdread4
+	sudo /usr/share/doc/libdvdread4/install-css.sh
+
+4. Install proprietary drivers
+
+5. Install a clibboard manager
+	
+	(diodon is one but has issues on cinnamon dekstop)
+	sudo apt-get install glipper
+	or 
+	sudo apt-get install clipit
+
+6. Optimize font rendering
+	Noto font
+	Droid font
+
+7. Install Guake drop down terminal or Yakuake
+
+	sudo apt-get install guake
+	or
+	sudo apt-get install yakuake
+
+	go to System Settings -> Startup Programs and add a new one /usr/bin/guake or /usr/bin/yakuake
+
+8. Install a download manager
+	sudo apt-get install uget
+
+9. Install System Information tool ( hardware )
+	sudo apt-get install hardinfo
+
+10. Install System Monitoring tool
+	sudo apt-add-repository -y ppa:teejee2008/ppa
+	sudo apt-get update
+	sudo apt-get install conky-manager
+
+At the end cleanup
+	sudo apt-get autoremove

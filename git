@@ -3,5 +3,7 @@ git ls-files -> list files that are tracked by the index (shows what files will 
 git branch <name> -> create a new branch at the current HEAD position
 git checkout <name> -> updates the working copy to the branch name or commit sha1
 git branch -d <name> -> delete a branch
-git fetch -> fetches changes from origin onto the current working cop
-git reset <commit> -> moves the tip of the current branch to commit number
+git fetch -> fetches changes from origin onto the current working copy
+git reset --HARD <commit> -> moves the tip of the current branch to commit number (--HARD will discard local changes) - use when moving backwards
+
+git merge <ref> -> will merge or fast forward the current branch or HEAD to the commit resulting from the merge
