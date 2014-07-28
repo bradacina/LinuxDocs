@@ -1,0 +1,164 @@
+Module names are separated by ::
+
+fn myFunc(arg1: int, arg2: int) -> int {
+}
+
+let hi = "hi";
+
+let mut count = 0i;
+
+while count < 10 {
+}
+
+println! => this is a macro ( ! ) or syntax extension
+
+type MyType = int; => this is a new type
+
+expesions vs statements => a statement terminates with ; and the returned type is () (unit type). and expression does not terminate with ; and returns a value
+
+let price: f64 = if item == "salad" { 3.50 } else { 4.20 }; => price gets assigned 3.50 or 4.20 , notince the lack of ;
+
+Data Types
+==========
+
+int, uint, i8, i16, i32, i64,  u8, u16, u32, u64
+int suffix is i
+uint suffix is u
+
+f32, f64
+
+true, false for bool
+
+char => 4 byte unicode codepoint
+'x' is a char
+"x" is a string
+backslash char as escape  => \n, \r, \t
+
+r##"blah"## => this is a raw char and no escape chars are interpreted
+
+() => unit type
+
+Operators
+=========
+*,/, %, +, -
+! to negate bits
+- => negates numbers
+<<, >>, &, |, ^ => bitwise operators
+==, !=, <, >, <=, >=, &&, || => logicals
+
+x as uing => compile time type casting
+
+
+Pattern Matching
+================
+match my_number {
+	0 => println!("zero"),
+	1 | 2 => println!("one or two"),
+	3..10 => println!("three to ten"),
+	_ => println!("something else")
+}
+
+unlike the switch statement, there is no fallthrough in the default case
+all possible values must be covered ( by using _ which matches everything )	
+
+a|b is used to match multiple values
+m..n is used to match a range
+_ is used as wildcard that matches any single value
+.. is a wildcard that can match one or more fields in an enum
+
+a subpattern can be bound to a variable using var @ pattern
+
+match age {
+	a @ 0..20 => println!("{} years old",a),
+	_ => println!("very old")
+
+a match arm can have a pattern guard ( if EXPR )
+
+<let> can be used to pattern match and is used in destructuring tuples
+
+Loops
+=====
+
+while COND {
+}
+
+for var in range(0,5) {
+	// var takes values from 0 to 4
+}
+
+<for> works with anything that implements the Iterator trait
+
+continue; and break; are used inside loops
+
+loop {
+	// used for infinite loops
+}
+
+
+Data Structures 
+===============
+
+struct Point {
+	x: f64,
+	y: f64
+}
+
+let p: Point = Point { x:1.0, y:2.0};
+
+structs have inherited mutability
+
+use <match> to destructure structs
+
+match p {
+	Point { x: 0.0, y: yy } => println!("{}",yy),
+	Point { x: xx, y: yy } => println!("{} {}",xx,yy)
+}
+
+match p {
+	Point { x, .. } => println("{}",x)
+}
+
+
+enum Direction {
+	North, <= this is called a variant ( enum variant )
+	East,
+	South,
+	West
+}
+
+variant can be complex types
+
+enum Shape {
+	Circle(Point, f64),
+	Rectangle(Point, Point)
+}
+
+the runtime representation of such a value includes an identifier of the actual form that it holds
+Circle and Rectangle are functions that are used to create a Shape.
+A Shape can hold a Point and an f64 or 2 Points
+
+To create a new circle:
+let circle = Circle(Point{x:0.0,y:0.0}, 10.0);
+
+use std::f64; => use f64 in standard library
+
+The only way to access contents of an complex enum variant is to destructure match
+
+Enum variants can also be structs:
+#![feature(struct_variant)]
+
+enum Shape {
+	Circle { center: Point, radius: f64},
+	Rectangle { top_left: Point, bottom_right: Point }
+}
+
+Tuples:
+let mytup: (int, int, f64) = (10,20,30.0);
+
+Tuple Structs:
+struct MyTup(int,int,f64) => the struct has a name but the fields have no names
+struct MyOtherTup(int,int,f64) => this tuple struct is different than MyTup
+
+special case Newtype ( tuple struct with one field ) mostly used to signal in the program that a type represents something special/different:
+struct Inches(int);
+struct Centimeters(int);

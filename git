@@ -7,3 +7,4 @@ git fetch -> fetches changes from origin onto the current working copy
 git reset --HARD <commit> -> moves the tip of the current branch to commit number (--HARD will discard local changes) - use when moving backwards
 
 git merge <ref> -> will merge or fast forward the current branch or HEAD to the commit resulting from the merge
+git clone --depth 1 <source> <dest> -> clones a repository and if it's large then it only retrieves the top level commit and its parent(s) so as to save space and make it faster. less network bandwidth is used as well. you get less history/log. you can only add on top of the top of the tree
