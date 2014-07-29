@@ -162,3 +162,71 @@ struct MyOtherTup(int,int,f64) => this tuple struct is different than MyTup
 special case Newtype ( tuple struct with one field ) mostly used to signal in the program that a type represents something special/different:
 struct Inches(int);
 struct Centimeters(int);
+
+Function parameters support destructuring
+
+let i = box 10i;
+box operator is used to allocate memory on the heap. When i goes
+out of scope, the destructor gets called and memory is freed.
+Types can implement custom destructors.
+
+use std::mem::size_of;
+
+struct Foo {
+	a: u32,
+	b: u32,
+	c: u32,
+	d: u32
+}
+
+size_of::<Foo>()
+
+Box - owned box (Box is located in std::owned) uses dynamic memory allocation to provide
+the invariant of always being the size of a pointer regardless of the contained type.
+
+enum List {
+	Cons(u32, Box<List>),
+	Nil 
+}      // a linked list
+
+Rust uses shallow copy for parameter passing, assignment and returning from functions
+-------------------------------------------------------------------------------------
+
+Rust will consider a shallow copy of a type with a distructor (the List type defined above
+is such a type ) to move ownership of the value. After a value has been moved, the
+source location cannot be used unless it is reinitialized.
+
+The clone() method will avoid a move ownership. It is provided by the Clone trait.
+
+References
+----------
+A reference is a non-owning view of a value. It can be obtained with the & operator
+and can be dereferenced with the * operator..
+
+fn eq(x: &List, y: &List) -> bool {
+	// the eq function does not require ownership of the
+	// 2 lists that are passed it so we changed the types
+	// of arguments to references 
+}
+
+match expression branches bind by value as well.
+
+match (a,b) {
+	(0,x) => ... // here x is bound by value???
+}
+
+if we want to bind by reference we can use the keyword ref
+
+match (a,b) {
+	(0, ref x) => ... // here x is bound by reference
+}
+
+Generics
+--------
+
+enum List<T> {
+	Cons(T, Box<List<T>>),
+	Nil
+}
+
+T,U,V are generic types in general
