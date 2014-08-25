@@ -52,6 +52,20 @@ static char fooBuf[PAGE_SIZE] = {0};
 static size_t fooBufEndOffset;
 DECLARE_RWSEM(foo_rw_semaphore);
 
+struct kobject kobj_var;
+
+memset(&kobj_var, 0, sizeof(kobj_var));
+kobject_init(&kobj_var);
+
+int result = sysfs_create_dir(kobj_variable)
+result >= 0 for success
+
+sysfs_create_file(kobj_var, struct attribute_var)
+
+
+sysfs_remove_file(kobj_var, struct attribute_var)
+sysfs_remove_dir(kobj_variable)
+
 static ssize_t foo_do_read(struct file *file, char __user *buf,
 					size_t count, loff_t *ppos)
 {

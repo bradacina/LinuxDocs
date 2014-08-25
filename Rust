@@ -221,6 +221,10 @@ match (a,b) {
 	(0, ref x) => ... // here x is bound by reference
 }
 
+When a reference is created the original object is frozen. It cannot be sent or its type changed until it has been unfrozen.
+It cannot be modified or re-asigned. The reference cannot outlive the original object ( compile time life time check is performed).
+As soon as the reference goes out of scope the original object is unfrozen.
+
 Generics
 --------
 
@@ -230,3 +234,26 @@ enum List<T> {
 }
 
 T,U,V are generic types in general
+
+
+Vectors and Strings
+-------------------
+
+vector - contiguous block of memory with 0 or more values of same type
+slices - vector reference type; view into a block of memory, no length
+strings - vectors of u8, valid UTF-8 sequence
+
+fixed sized vectors are unboxed blocks of memory, with the length as part of the type -> let five_zeroes: [int, ...5] = [0,..5];
+
+unique vector - dynamically sized, has a distructor -> let mut numbers: Vec<int> = vec![1i,2,3]; numbers.push(4);
+slice - let xs: &[int] = &[1,2,3];
+
+other vector types coerce to slices
+
+string slice - let view: &str = "asdasd";
+
+there are mutable slices
+there are mutable references
+there are no mutable string slices
+
+mutable slice - let ys: &mut [int] = &mut [1i,2i,3i];

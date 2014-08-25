@@ -1,0 +1,60 @@
+linux/kobject.h
+
+struct kobject kobj;
+
+void kobject_init(struct kobject *kobj);
+struct kobject *kobject_get(struct kobject *kobj); -> reference count increment
+void kobject_put(struct kobject *kobj);  -> reference count decrement
+
+kobject_set_name(struct kobject *kobj, "name");
+
+kobject is usualy embeded by other structures
+container_of() methos is used to retrieve the embeding structure, given a pointer to a kobject
+release method is called whenever the reference count goes to 0
+kfree(embeding struct)
+
+struct kobj_type {
+	void (*release)(struct kobject *);
+	struct sysfs_ops *sysfs_ops;
+	struct attribute **default_attrs;
+}
+
+kobject must point to a kobj_type ( this defines the type of kobject ). if the kobject
+is part of a kset, the kset must point to a kobj_type. the macro
+
+	struct kobj_type *get_ktype(struct kobject *kobj);
+
+finds the type of a kobject.
+
+Kobject is linked to other kobjects through its kparent member. If not, the Kobject
+must be part of a kset.
+
+Ksets
+-----
+
+Ksets are containers of kobject. Ksets must have a ktype. A kset contains its own
+internal kobject. When adding a kobject to a kset, we must set the kset member of the
+kobject and then call:
+
+	int kobject_add(struct kobject *kobj);
+
+This can return a negative value if it fails. To remove it from the kset we call:
+
+	void kobject_del(struct kobject *kobj);
+
+There are utility functions to help with kinit and kadd:
+
+	extern int kobject_register(struct kobject *kobj);
+
+and kdel and kput:
+	kobject_unregister(struct kobject *kobj);
+
+void kset_init(struct kset *kset);
+int kset_add(struct kset *kset);
+int kset_register(struct kset *kset);
+void kset_unregister(struct kset *kset);
+
+struct kset *kset_get(struct kset *kset);
+void kset_put(struct kset *kset);
+
+
