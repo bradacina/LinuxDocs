@@ -1,4 +1,4 @@
-
+#include <linux/fs.h>
 #include <linux/module.h>
 #include <linux/errno.h>
 #include <linux/sysfs.h>
@@ -24,47 +24,24 @@ static ssize_t jiffies_do_write(struct file *, const char __user *,
 static ssize_t foo_do_read(struct file *, char __user *, size_t, loff_t *);
 static ssize_t foo_do_write(struct file *, const char __user *,
 							size_t, loff_t *);
-static const struct file_operations  foo_fops = {
-	.owner = THIS_MODULE,
-	.read = foo_do_read,
-	.write = foo_do_write
-};
-
-static const struct file_operations jiffies_fops = {
-	.owner = THIS_MODULE,
-	.read = jiffies_do_read,
-	.write = jiffies_do_write
-};
-
-static const struct file_operations id_fops = {
-	.owner = THIS_MODULE,
-	.read = id_do_read,
-	.write = id_do_write
-};
-
-static struct dentry *dirEntry;
-static struct dentry *idEntry;
-static struct dentry *jiffiesEntry;
-static struct dentry *fooEntry;
-
 static char jiffiesBuf[25] = {0};
 static char fooBuf[PAGE_SIZE] = {0};
 static size_t fooBufEndOffset;
-DECLARE_RWSEM(foo_rw_semaphore);
+static struct rw_semaphore foo_rw_semaphore;
 
-struct kobject kobj_var;
+static struct kobj_attribute idAttr = __ATTR(MY_ID, 0644, &id_do_read, &id_do_write); 
 
-memset(&kobj_var, 0, sizeof(kobj_var));
-kobject_init(&kobj_var);
+static struct attribute * attributes[] = {
+	&idAttr.attr,
+	NULL
+};
 
-int result = sysfs_create_dir(kobj_variable)
-result >= 0 for success
+static struct kobj_type dirKtype = {
+	.sysfs_ops = &kobj_sysfs_ops,
+	.default_attrs = &attributes
+};
 
-sysfs_create_file(kobj_var, struct attribute_var)
-
-
-sysfs_remove_file(kobj_var, struct attribute_var)
-sysfs_remove_dir(kobj_variable)
+static struct kobject dirKobj = {0};
 
 static ssize_t foo_do_read(struct file *file, char __user *buf,
 					size_t count, loff_t *ppos)
@@ -150,37 +127,17 @@ out:
 
 static void cleanup(void)
 {
-	debugfs_remove_recursive(dirEntry);
+	kobject_put(&dirKobj);
 }
 
 static __init int hello_init(void)
 {
-	dirEntry = debugfs_create_dir(DIR_NAME, NULL);
-	if (IS_ERR_OR_NULL(dirEntry))
-		return PTR_ERR(dirEntry);
-
-	idEntry = debugfs_create_file(ID_FILE_NAME, 0666,
-						dirEntry, NULL, &id_fops);
-	if (IS_ERR_OR_NULL(idEntry)) {
-		cleanup();
-		return PTR_ERR(idEntry);
+	int error = kobject_init_and_add(&dirKobj, &dirKtype, NULL,
+			"%s", DIR_NAME);
+	if ( IS_ERR(error) ) {
+		return error;
 	}
 
-	jiffiesEntry = debugfs_create_file(JIFFIES_FILE_NAME, 0444,
-		dirEntry, NULL, &jiffies_fops);
-	if (IS_ERR_OR_NULL(jiffiesEntry)) {
-		cleanup();
-		return PTR_ERR(jiffiesEntry);
-	}
-
-	fooEntry = debugfs_create_file(FOO_FILE_NAME, 0644,
-		dirEntry, NULL, &foo_fops);
-	if (IS_ERR_OR_NULL(fooEntry)) {
-		cleanup();
-		return PTR_ERR(fooEntry);
-	}
-
-	return 0;
 }
 
 static __exit void hello_exit(void)

@@ -126,3 +126,18 @@ struct sysfs_ops {
         ssize_t (*show)(kobj, struct attribute *attr, char *buf);
         ssize_t (*store)(kobj, struct attribute *attr, const char *, size_t);
 };
+
+Code in Linux kernel seems to use the __ATTR macro to create struct 
+kobj_attribute. This struct has a field called .attr of type struct attribute
+that is used when initializing the kobj_type.default_attrs field.
+
+Code in Linux kernel is using kobj_sysfs_ops for the sysfs_ops field of the
+kobj_type. The kobj_sysfs_ops comes precoded with store and show methods that
+will get the container_of the attribute (yielding kobj_attribute) and will
+forward the calls to store and show to the store and show defined in the 
+kobj_attribute struct.
+
+The pattern to initialize a ktype seems to be:
+struct kobj_attribute myAttr = __ATTR(name, mode, show, store);
+struct attribute attributes[] = { &myAttr.attr, NULL }; 
+struct kobj_type type = { .sysfs_ops = &kobj_sysfs_ops, .default_attrs = attributes };
