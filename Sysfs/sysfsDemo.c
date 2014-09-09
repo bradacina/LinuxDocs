@@ -1,6 +1,7 @@
 #include <linux/fs.h>
 #include <linux/module.h>
 #include <linux/errno.h>
+#include <linux/kobject.h>
 #include <linux/sysfs.h>
 #include <linux/string.h>
 #include <linux/rwsem.h>
@@ -15,21 +16,17 @@
 #define MY_ID_CHAR_COUNT 12
 
 /* forward declarations */
-static ssize_t id_do_read(struct file *, char __user *, size_t, loff_t *);
-static ssize_t id_do_write(struct file *, const char __user *,
-							size_t, loff_t *);
-static ssize_t jiffies_do_read(struct file *, char __user *, size_t, loff_t *);
-static ssize_t jiffies_do_write(struct file *, const char __user *,
-							size_t, loff_t *);
-static ssize_t foo_do_read(struct file *, char __user *, size_t, loff_t *);
-static ssize_t foo_do_write(struct file *, const char __user *,
-							size_t, loff_t *);
+static ssize_t show_id(struct kobject *kobj, struct kobj_attribute *attr,
+			char *buf);
+static ssize_t store_id(struct kobject *kobj, struct kobj_attribute *attr,
+			 const char *buf, size_t count);
+
 static char jiffiesBuf[25] = {0};
 static char fooBuf[PAGE_SIZE] = {0};
 static size_t fooBufEndOffset;
 static struct rw_semaphore foo_rw_semaphore;
 
-static struct kobj_attribute idAttr = __ATTR(MY_ID, 0644, &id_do_read, &id_do_write); 
+static struct kobj_attribute idAttr = __ATTR(MY_ID, 0644, &show_id, &store_id); 
 
 static struct attribute * attributes[] = {
 	&idAttr.attr,
@@ -38,11 +35,23 @@ static struct attribute * attributes[] = {
 
 static struct kobj_type dirKtype = {
 	.sysfs_ops = &kobj_sysfs_ops,
-	.default_attrs = &attributes
+	.default_attrs = attributes
 };
 
 static struct kobject dirKobj = {0};
 
+static ssize_t show_id(struct kobject *kobj, struct kobj_attribute *attr,
+			char *buf) {
+
+	return 0;
+}
+
+static ssize_t store_id(struct kobject *kobj, struct kobj_attribute *attr,
+			 const char *buf, size_t count) {
+	return 0;
+}
+
+/*
 static ssize_t foo_do_read(struct file *file, char __user *buf,
 					size_t count, loff_t *ppos)
 {
@@ -124,6 +133,7 @@ static ssize_t id_do_write(struct file *file, const char __user *buf,
 out:
 	return numWritten;
 }
+*/
 
 static void cleanup(void)
 {
@@ -134,9 +144,11 @@ static __init int hello_init(void)
 {
 	int error = kobject_init_and_add(&dirKobj, &dirKtype, NULL,
 			"%s", DIR_NAME);
-	if ( IS_ERR(error) ) {
+	if ( error < 0 ) {
 		return error;
 	}
+
+	return error;
 
 }
 
