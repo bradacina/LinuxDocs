@@ -5,13 +5,14 @@
 #include <linux/sysfs.h>
 #include <linux/string.h>
 #include <linux/rwsem.h>
+#include <asm/uaccess.h>
 
 #define DRIVER_AUTHOR "Bogdan Radacina"
 #define DRIVER_DESC "Demo Usage of sysfs"
 #define DIR_NAME "eudyptula"
-#define ID_FILE_NAME "id"
-#define JIFFIES_FILE_NAME "jiffies"
-#define FOO_FILE_NAME "foo"
+#define ID_FILE_NAME id
+#define JIFFIES_FILE_NAME jiffies
+#define FOO_FILE_NAME foo
 #define MY_ID "25e6eec82542"
 #define MY_ID_CHAR_COUNT 12
 
@@ -21,20 +22,58 @@ static ssize_t show_id(struct kobject *kobj, struct kobj_attribute *attr,
 static ssize_t store_id(struct kobject *kobj, struct kobj_attribute *attr,
 			 const char *buf, size_t count);
 
-static char jiffiesBuf[25] = {0};
-static char fooBuf[PAGE_SIZE] = {0};
-static size_t fooBufEndOffset;
-static struct rw_semaphore foo_rw_semaphore;
+static ssize_t show_jiffies(struct kobject *kobj, struct kobj_attribute *attr,
+			char *buf);
+static ssize_t store_jiffies(struct kobject *kobj, struct kobj_attribute *attr,
+			 const char *buf, size_t count);
 
-static struct kobj_attribute idAttr = __ATTR(MY_ID, 0644, &show_id, &store_id); 
+static ssize_t show_foo(struct kobject *kobj, struct kobj_attribute *attr,
+			char *buf);
+static ssize_t store_foo(struct kobject *kobj, struct kobj_attribute *attr,
+			 const char *buf, size_t count);
+
+static struct kobj_attribute idAttr = __ATTR(ID_FILE_NAME, 0644, show_id, store_id); 
+static struct kobj_attribute jiffiesAttr = __ATTR(JIFFIES_FILE_NAME, 0644, &show_jiffies, &store_jiffies); 
+static struct kobj_attribute fooAttr = __ATTR(FOO_FILE_NAME, 0644, &show_foo, &store_foo); 
 
 static struct attribute * attributes[] = {
 	&idAttr.attr,
+	&jiffiesAttr.attr,
+	&fooAttr.attr,
 	NULL
 };
 
+static ssize_t show(struct kobject *kobj, struct attribute *attr,
+                              char *buf)
+{
+        struct kobj_attribute *kattr;
+        ssize_t ret = -EIO;
+
+        kattr = container_of(attr, struct kobj_attribute, attr);
+        if (kattr->show)
+                ret = kattr->show(kobj, kattr, buf);
+        return ret;
+}
+
+static ssize_t store(struct kobject *kobj, struct attribute *attr,
+                               const char *buf, size_t count)
+{
+        struct kobj_attribute *kattr;
+        ssize_t ret = -EIO;
+
+        kattr = container_of(attr, struct kobj_attribute, attr);
+        if (kattr->store)
+                ret = kattr->store(kobj, kattr, buf, count);
+        return ret;
+}
+
+static struct sysfs_ops my_sysfs_ops = {
+	.show = show,
+	.store = store
+};
+
 static struct kobj_type dirKtype = {
-	.sysfs_ops = &kobj_sysfs_ops,
+	.sysfs_ops = &my_sysfs_ops,
 	.default_attrs = attributes
 };
 
@@ -43,97 +82,49 @@ static struct kobject dirKobj = {0};
 static ssize_t show_id(struct kobject *kobj, struct kobj_attribute *attr,
 			char *buf) {
 
-	return 0;
+	return sprintf(buf, "%s", MY_ID);
 }
 
 static ssize_t store_id(struct kobject *kobj, struct kobj_attribute *attr,
 			 const char *buf, size_t count) {
-	return 0;
-}
 
-/*
-static ssize_t foo_do_read(struct file *file, char __user *buf,
-					size_t count, loff_t *ppos)
-{
-	int n = 0;
-	down_read(&foo_rw_semaphore);
-	n = simple_read_from_buffer(buf,
-			count, ppos, fooBuf, fooBufEndOffset);
-	up_read(&foo_rw_semaphore);
-	return n;
-}
+	char readBuf[MY_ID_CHAR_COUNT+1] = {0};
 
-static ssize_t foo_do_write(struct file *file, const char __user *buf,
-			    size_t count, loff_t *ppos)
-{
-	int numWritten = 0;
-	down_write(&foo_rw_semaphore);
-
-	if (*ppos == 0) {
-		memset(fooBuf, 0, sizeof(fooBuf));
-		fooBufEndOffset = 0;
-	}
-
-	if (*ppos + count > PAGE_SIZE) {
-		up_write(&foo_rw_semaphore);
+	if (count != MY_ID_CHAR_COUNT +1 ) {
 		return -EINVAL;
 	}
 
-	numWritten = simple_write_to_buffer(fooBuf,
-		sizeof(fooBuf), ppos, buf, count);
+	copy_from_user(readBuf, buf, count);
+	pr_debug("%s\n", readBuf);
 
-	fooBufEndOffset += numWritten;
+	if(strncmp(readBuf, MY_ID, MY_ID_CHAR_COUNT) == 0) {
+		return count;
+	}
 
-	up_write(&foo_rw_semaphore);
-	return numWritten;
-}
-
-static ssize_t jiffies_do_read(struct file *file, char __user *buf,
-					size_t count, loff_t *ppos)
-{
-	int n = 0;
-	memset(jiffiesBuf, 0, sizeof(jiffiesBuf));
-	n = sprintf(jiffiesBuf, "%lud", jiffies);
-	jiffiesBuf[n] = '\0';
-	return simple_read_from_buffer(buf,
-			count, ppos, jiffiesBuf, n);
-}
-
-static ssize_t jiffies_do_write(struct file *file, const char __user *buf,
-						size_t count, loff_t *ppos)
-{
 	return -EINVAL;
 }
 
-static ssize_t id_do_read(struct file *file, char __user *buf, size_t count,
-			   loff_t *ppos)
-{
-	return simple_read_from_buffer(buf,
-			count, ppos, MY_ID, MY_ID_CHAR_COUNT);
+static ssize_t show_jiffies(struct kobject *kobj, struct kobj_attribute *attr,
+			char *buf) {
+
+	return 0;
 }
 
-static ssize_t id_do_write(struct file *file, const char __user *buf,
-			    size_t count, loff_t *ppos)
-{
-	size_t numWritten = 0;
-	char myBuf[MY_ID_CHAR_COUNT] = {0};
-
-	numWritten = simple_write_to_buffer(myBuf,
-		MY_ID_CHAR_COUNT, ppos, buf, count);
-	if (numWritten < 0 || count > MY_ID_CHAR_COUNT+1) {
-		numWritten = -EINVAL;
-		goto out;
-	}
-
-	if (strncmp(myBuf, MY_ID, MY_ID_CHAR_COUNT)) {
-		numWritten = -EINVAL;
-		goto out;
-	}
-	numWritten = count;
-out:
-	return numWritten;
+static ssize_t store_jiffies(struct kobject *kobj, struct kobj_attribute *attr,
+			 const char *buf, size_t count) {
+	return 0;
 }
-*/
+
+static ssize_t show_foo(struct kobject *kobj, struct kobj_attribute *attr,
+			char *buf) {
+
+	return 0;
+}
+
+static ssize_t store_foo(struct kobject *kobj, struct kobj_attribute *attr,
+			 const char *buf, size_t count) {
+	return 0;
+}
 
 static void cleanup(void)
 {
