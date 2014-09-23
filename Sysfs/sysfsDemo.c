@@ -5,7 +5,7 @@
 #include <linux/sysfs.h>
 #include <linux/string.h>
 #include <linux/rwsem.h>
-#include <asm/uaccess.h>
+#include <linux/uaccess.h>
 
 #define DRIVER_AUTHOR "Bogdan Radacina"
 #define DRIVER_DESC "Demo Usage of sysfs"
@@ -34,10 +34,16 @@ static ssize_t store_foo(struct kobject *kobj, struct kobj_attribute *attr,
 
 /* end forward declarations */
 
-static struct kobj_attribute idAttr = __ATTR(ID_FILE_NAME, 0666, show_id, store_id); 
-static struct kobj_attribute jiffiesAttr = __ATTR(JIFFIES_FILE_NAME, 0444, &show_jiffies, &store_jiffies); 
-static struct kobj_attribute fooAttr = __ATTR(FOO_FILE_NAME, 0644, &show_foo, &store_foo); 
-static struct attribute * attributes[] = {
+static struct kobj_attribute idAttr = __ATTR(ID_FILE_NAME, 0666, show_id,
+							store_id);
+
+static struct kobj_attribute jiffiesAttr = __ATTR(JIFFIES_FILE_NAME, 0444,
+					&show_jiffies, &store_jiffies);
+
+static struct kobj_attribute fooAttr = __ATTR(FOO_FILE_NAME, 0644,
+						&show_foo, &store_foo);
+
+static struct attribute *attributes[] = {
 	&idAttr.attr,
 	&jiffiesAttr.attr,
 	&fooAttr.attr,
@@ -51,30 +57,30 @@ DECLARE_RWSEM(foo_rw_semaphore);
 
 
 static ssize_t show(struct kobject *kobj, struct attribute *attr,
-                              char *buf)
+							char *buf)
 {
-        struct kobj_attribute *kattr;
-        ssize_t ret = -EIO;
+	struct kobj_attribute *kattr;
+	ssize_t ret = -EIO;
 
-        kattr = container_of(attr, struct kobj_attribute, attr);
-        if (kattr->show)
-                ret = kattr->show(kobj, kattr, buf);
-        return ret;
+	kattr = container_of(attr, struct kobj_attribute, attr);
+	if (kattr->show)
+		ret = kattr->show(kobj, kattr, buf);
+	return ret;
 }
 
 static ssize_t store(struct kobject *kobj, struct attribute *attr,
-                               const char *buf, size_t count)
+			       const char *buf, size_t count)
 {
-        struct kobj_attribute *kattr;
-        ssize_t ret = -EIO;
+	struct kobj_attribute *kattr;
+	ssize_t ret = -EIO;
 
-        kattr = container_of(attr, struct kobj_attribute, attr);
-        if (kattr->store)
-                ret = kattr->store(kobj, kattr, buf, count);
-        return ret;
+	kattr = container_of(attr, struct kobj_attribute, attr);
+	if (kattr->store)
+		ret = kattr->store(kobj, kattr, buf, count);
+	return ret;
 }
 
-static struct sysfs_ops my_sysfs_ops = {
+static const struct sysfs_ops my_sysfs_ops = {
 	.show = show,
 	.store = store
 };
@@ -97,16 +103,14 @@ static ssize_t store_id(struct kobject *kobj, struct kobj_attribute *attr,
 
 	char readBuf[MY_ID_CHAR_COUNT+1] = {0};
 
-	if (count != MY_ID_CHAR_COUNT +1 ) {
+	if (count != MY_ID_CHAR_COUNT + 1)
 		return -EINVAL;
-	}
 
 	memcpy(readBuf, buf, count);
 	pr_debug("%s\n", readBuf);
 
-	if(strncmp(readBuf, MY_ID, MY_ID_CHAR_COUNT) == 0) {
+	if (strncmp(readBuf, MY_ID, MY_ID_CHAR_COUNT) == 0)
 		return count;
-	}
 
 	return -EINVAL;
 }
@@ -115,6 +119,7 @@ static ssize_t show_jiffies(struct kobject *kobj, struct kobj_attribute *attr,
 			char *buf) {
 
 	int n = sprintf(buf, "%lud", jiffies);
+
 	buf[n] = 0;
 	return n;
 }
@@ -127,16 +132,17 @@ static ssize_t store_jiffies(struct kobject *kobj, struct kobj_attribute *attr,
 static ssize_t show_foo(struct kobject *kobj, struct kobj_attribute *attr,
 			char *buf) {
 	int n = 0;
+
 	down_read(&foo_rw_semaphore);
-	n = snprintf(buf, fooBufEndOffset, "%s", fooBuf );
+	n = snprintf(buf, fooBufEndOffset, "%s", fooBuf);
 	up_read(&foo_rw_semaphore);
 	return n;
 }
 
 static ssize_t store_foo(struct kobject *kobj, struct kobj_attribute *attr,
 			 const char *buf, size_t count) {
-	
-	fooBufEndOffset = count > PAGE_SIZE ? PAGE_SIZE-1: count;
+
+	fooBufEndOffset = count > PAGE_SIZE ? PAGE_SIZE-1 : count;
 	down_write(&foo_rw_semaphore);
 	memset(fooBuf, 0, sizeof(fooBuf));
 	memcpy(fooBuf, buf, fooBufEndOffset);
@@ -154,12 +160,10 @@ static __init int hello_init(void)
 {
 	int error = kobject_init_and_add(&dirKobj, &dirKtype, kernel_kobj,
 			"%s", DIR_NAME);
-	if ( error < 0 ) {
+	if (error < 0)
 		return error;
-	}
 
 	return error;
-
 }
 
 static __exit void hello_exit(void)
