@@ -1,8 +1,8 @@
 
 C-x C-c -> end Emacs session
 C-g -> quit partially entered command
-C-v -> move forward one screen
-M-v -> move backward one screen
+C-v -> move down one screen (overlap last 2 lines)
+M-v -> move upward one screen (overlap first 2 lines)
 C-l -> clear screen and redisplay all text
 C-b -> move cursor backwards on the same line (arrow left)
 C-f -> move cursor forward on the same line (arrow right)

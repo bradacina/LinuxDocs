@@ -71,7 +71,7 @@ start vim with a folder path (eg. vim . , or vim /some/path )
 :Exp <path> -> explores the given path
 
 
-CtrlP plugin
+CtrlP plugin (WHAT DOES THIS DO?)
 =================
 Installation
 ------------
@@ -86,3 +86,12 @@ in vim run:
 
 restart vim and run:
  :help ctrlp.txt
+
+
+Vundle plugin ( allows easy installation of bundles from remote repos )
+
+YouCompleteMe (auto completion plugin - works for go - need python support in vim )
+
+Molokai theme (color theme for vim - need 256 color terminal when connecting with putty)
+
+Vim-go ( plugin for go coding in vim )
