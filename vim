@@ -95,3 +95,11 @@ YouCompleteMe (auto completion plugin - works for go - need python support in vi
 Molokai theme (color theme for vim - need 256 color terminal when connecting with putty)
 
 Vim-go ( plugin for go coding in vim )
+
+NerdTree ( nagivation tree on left side of the window )
+
+Command-T ( find files in a folder with ctrl+t )
+
+BufferExplorer ( explores the list of open buffers )
+
+EasyGep ( easy way to find a word in all files or folder )
