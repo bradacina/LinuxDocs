@@ -1,0 +1,21 @@
+GVM tool - http://gvmtool.net/
+install with -> curl -s get.gvmtool.net | bash
+REQUIRES JAVA ALREADY INSTALLED AND $JAVA_HOME SETUP
+
+install groovy -> gvm install groovy
+install gradle -> gvm install gradle
+install grails -> gvm install grails
+
+Project Directory Structure
+--------------------------
+project_name/src/main/java
+project_name/src/main/resources
+project_name/src/main/groovy
+project_name/test/java
+project_name/test/resources
+project_name/test/groovy
+project_name/src/<sourceSet>/java
+project_name/src/<sourceSet>/resources
+project_name/src/<sourceSet>/groovy
+
+
