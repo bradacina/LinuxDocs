@@ -71,7 +71,7 @@ start vim with a folder path (eg. vim . , or vim /some/path )
 :Exp <path> -> explores the given path
 
 
-CtrlP plugin (WHAT DOES THIS DO?)
+CtrlP plugin (fuzzy finder in files, folders)
 =================
 Installation
 ------------
@@ -98,7 +98,7 @@ Vim-go ( plugin for go coding in vim )
 
 NerdTree ( nagivation tree on left side of the window )
 
-Command-T ( find files in a folder with ctrl+t )
+Command-T ( find files in a folder with ctrl+t - requires Ruby, C on machine)
 
 BufferExplorer ( explores the list of open buffers )
 
