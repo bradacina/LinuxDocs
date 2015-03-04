@@ -61,6 +61,9 @@ Misc
 :set shiftwidth=4
 :set softtabstop=4
 
+gg=G -> fix indentation in file
+set cindent -> sets indentation mode to C
+
 NetRW
 ========
 Allows browsing of files and folders on either local machine or remote machine
@@ -97,6 +100,9 @@ Molokai theme (color theme for vim - need 256 color terminal when connecting wit
 Vim-go ( plugin for go coding in vim )
 
 NerdTree ( nagivation tree on left side of the window )
+-------------------------------------------------------
+m -> file system menu 
+a -> add new child node (file) from the file system menu
 
 Command-T ( find files in a folder with ctrl+t - requires Ruby, C on machine)
 
