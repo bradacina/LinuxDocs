@@ -64,6 +64,11 @@ Misc
 gg=G -> fix indentation in file
 set cindent -> sets indentation mode to C
 
+Diff
+----
+vim -d file1 file2
+:diffupdate -> update the view after some changes in the buffers were made and files were saved
+
 NetRW
 ========
 Allows browsing of files and folders on either local machine or remote machine
